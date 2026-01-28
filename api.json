@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "updated_at": "2026-01-28T00:00:00+08:00",
+  "recommended": "A",
+  "channels": {
+    "A": { "base_url": "https://all-pillows-fly.loca.lt", "status": "active" },
+    "B": { "base_url": "https://pretty-dragons-cough.loca.lt", "status": "active" }
+  }
+}
