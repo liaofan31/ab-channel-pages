@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AB 双通道地址</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background: #0b1220; color: #e5e7eb; }
+    .wrap { max-width: 840px; margin: 0 auto; padding: 20px; }
+    .card { background: #0f172a; border: 1px solid #243244; border-radius: 12px; padding: 16px; margin-top: 12px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .label { font-size: 12px; color: #93c5fd; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace; word-break: break-all; }
+    button { background: #334155; color: #e5e7eb; border: 1px solid #475569; border-radius: 10px; padding: 8px 12px; cursor: pointer; }
+    .badge { padding: 2px 8px; border-radius: 999px; background: #14532d; color: #bbf7d0; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>AB 双通道地址</h2>
+    <div class="card">
+      <div class="label">API 数据</div>
+      <div id="raw" class="mono" style="margin-top: 8px;"></div>
+    </div>
+    <div class="card">
+      <div class="row">
+        <div>
+          <div class="label">推荐通道</div>
+          <div id="recommended" class="badge" style="margin-top: 6px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">通道 A</div>
+      <div class="row" style="margin-top: 6px;">
+        <div id="aUrl" class="mono"></div>
+        <button id="copyA">复制</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="label">通道 B</div>
+      <div class="row" style="margin-top: 6px;">
+        <div id="bUrl" class="mono"></div>
+        <button id="copyB">复制</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const rawEl = document.getElementById('raw');
+    const recEl = document.getElementById('recommended');
+    const aUrlEl = document.getElementById('aUrl');
+    const bUrlEl = document.getElementById('bUrl');
+    const copyA = document.getElementById('copyA');
+    const copyB = document.getElementById('copyB');
+    let dataCache = null;
+
+    async function loadData() {
+      const res = await fetch('./api.json', { cache: 'no-store' });
+      const data = await res.json();
+      dataCache = data;
+      rawEl.textContent = JSON.stringify(data, null, 2);
+      recEl.textContent = data.recommended || '';
+      aUrlEl.textContent = data.channels?.A?.base_url || '';
+      bUrlEl.textContent = data.channels?.B?.base_url || '';
+    }
+
+    function copyText(text) {
+      if (!text) return;
+      navigator.clipboard.writeText(text);
+    }
+
+    copyA.addEventListener('click', () => copyText(dataCache?.channels?.A?.base_url));
+    copyB.addEventListener('click', () => copyText(dataCache?.channels?.B?.base_url));
+    loadData();
+  </script>
+</body>
+</html>
